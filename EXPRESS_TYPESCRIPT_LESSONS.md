@@ -34,16 +34,24 @@ npx tsc --init
 ```json
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "commonjs",
-    "lib": ["ES2020"],
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "lib": ["ES2022"],
     "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true
+  },
+  "ts-node": {
+    "esm": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
@@ -52,7 +60,8 @@ npx tsc --init
 
 **src/server.ts**:
 ```typescript
-import express, { Request, Response, Application } from 'express';
+import express from 'express';
+import type { Request, Response, Application } from 'express';
 
 const app: Application = express();
 const PORT: number = parseInt(process.env.PORT || '3000');
@@ -70,7 +79,7 @@ app.listen(PORT, () => {
 ```json
 {
   "scripts": {
-    "dev": "nodemon src/server.ts",
+    "dev": "nodemon --exec \"node --loader ts-node/esm\" src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js"
   }
@@ -92,7 +101,7 @@ app.listen(PORT, () => {
 
 **Hands-on**:
 ```typescript
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 
 // Custom interfaces
 interface User {
@@ -176,7 +185,7 @@ app.get('/search', (req: Request<{}, User[], {}, SearchQuery>, res: Response<Use
 
 **Hands-on**:
 ```typescript
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 
 // Extend Request interface for custom properties
 declare global {
@@ -274,7 +283,7 @@ async function verifyToken(token: string): Promise<User> {
 
 **Hands-on**:
 ```typescript
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 
 // Generic response types
 interface ApiResponse<T> {
@@ -435,7 +444,8 @@ export interface ApiResponse<T> {
 
 **src/routes/users.ts**:
 ```typescript
-import { Router, Request, Response } from 'express';
+import { Router } from 'express';
+import type { Request, Response } from 'express';
 import { User, CreateUserRequest, UpdateUserRequest, UserParams, ApiResponse } from '../types';
 
 const router = Router();
@@ -599,7 +609,7 @@ export default app;
 
 **Hands-on**:
 ```typescript
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 
 interface ProfileData {
   user: {
@@ -711,7 +721,7 @@ app.get('/profile/:username', getProfile);
 
 **Hands-on**:
 ```typescript
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 
 // Custom error classes
 abstract class AppError extends Error {
@@ -869,7 +879,7 @@ app.use(errorHandler);
 
 **Hands-on**:
 ```typescript
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { body, query, param, validationResult, ValidationChain } from 'express-validator';
 
 // Validation result interface
